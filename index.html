@@ -35,7 +35,9 @@
     webLink.href = webUrl;
     appLink.hidden = false;
     webLink.hidden = false;
-    msg.textContent = "自動で開かない場合は上のボタンを押してください。";
+    // 現行の Gmail iOS アプリは cv= のメッセージ指定を無視するため、開くのは受信箱まで
+    // （2026-08 実機検証済み。復活に備えて cv= は付けたままにしている）。
+    msg.textContent = "アプリでは受信箱が開きます。自動で開かない場合は上のボタンを押してください。";
     location.href = appUrl;
   } else {
     msg.textContent = "リンクにメールIDがありません。通知からもう一度開いてください。";
