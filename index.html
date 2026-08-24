@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Gmail で開く</title>
+<style>
+  body { font-family: -apple-system, sans-serif; margin: 0; padding: 48px 24px; text-align: center; color: #202124; }
+  a.button { display: block; max-width: 320px; margin: 12px auto; padding: 14px; border-radius: 24px; text-decoration: none; font-size: 16px; }
+  #app { background: #1a73e8; color: #fff; }
+  #web { border: 1px solid #dadce0; color: #1a73e8; }
+  p.note { color: #5f6368; font-size: 13px; }
+</style>
+</head>
+<body>
+<h1 style="font-size:20px">Gmail で開く</h1>
+<a id="app" class="button" hidden>Gmail アプリで開く</a>
+<a id="web" class="button" hidden>Web 版 Gmail で開く</a>
+<p class="note" id="msg">リンク情報を読み取っています…</p>
+<script>
+  // メールIDは URL フラグメント（#cv=...&acct=...）でのみ受け取る。
+  // フラグメントは HTTP リクエストに含まれないため、サーバー側には一切送信されない。
+  var params = new URLSearchParams(location.hash.slice(1));
+  var cv = params.get("cv") || "";
+  var acct = params.get("acct") || "1";
+  var msg = document.getElementById("msg");
+  // Gmail のメッセージIDは16進、accountId は数値のみ許可（スキーム組み立てへの注入防止）
+  if (/^[0-9a-fA-F]+$/.test(cv) && /^[0-9]+$/.test(acct)) {
+    var appUrl = "googlegmail:///cv=" + cv + "/accountId=" + acct;
+    var webUrl = "https://mail.google.com/mail/u/0/#inbox/" + cv;
+    var appLink = document.getElementById("app");
+    var webLink = document.getElementById("web");
+    appLink.href = appUrl;
+    webLink.href = webUrl;
+    appLink.hidden = false;
+    webLink.hidden = false;
+    msg.textContent = "自動で開かない場合は上のボタンを押してください。";
+    location.href = appUrl;
+  } else {
+    msg.textContent = "リンクにメールIDがありません。通知からもう一度開いてください。";
+  }
+</script>
+</body>
+</html>
